@@ -7,4 +7,4 @@ Let's start with the need for Transformer; a model that only used the attention 
 Limitations of Recurrance and Convulutions
 Recurrance
 * Lack of Parallelizaion
-    
+    the
