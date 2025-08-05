@@ -21,5 +21,7 @@ Let's start with the need for Transformer; a model that only used the attention 
 "the encoder maps an input sequence of symbol representations (x1, ..., xn) to a sequence
 of continuous representations z = (z1, ..., zn). Given z, the decoder then generates an output
 sequence (y1, ..., ym) of symbols one element at a time."
+
 #### Encoder
+
 #### Decoder
