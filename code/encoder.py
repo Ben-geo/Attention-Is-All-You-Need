@@ -1,8 +1,12 @@
+import math
+import torch
+from torch import nn
+
 class MultiheadAttention(nn.Module):
     def __init__(self,d_model,num_heads):
         super().__init__()
         self.num_heads = num_heads
-        seld.d_model = d_model
+        self.d_model = d_model
         self.depth = d_model//num_heads
         
         self.wq = nn.Linear(d_model,d_model)
