@@ -51,3 +51,17 @@ class MultiheadAttention(nn.Module):
         output = output.view(q.size(0),-1,self.d_model)
 
         return self.fc_out(output)
+
+class PositionalFeedForwardNetwork(nn.Module):
+    def __init__(self,d_model,dff):
+        super().__init__()
+
+        self.f1 = nn.Linear(d_model,dff)
+        self.f2 = nn.Linear(dff,d_model)
+
+    def forward(self,x):
+
+        x = self.f1(x)
+        x = torch.relu(x)
+        x = self.f2(x)
+        return x
