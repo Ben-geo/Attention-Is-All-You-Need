@@ -60,7 +60,7 @@ class PositionalFeedForwardNetwork(nn.Module):
         self.f2 = nn.Linear(dff,d_model)
 
     def forward(self,x):
-
+        # it is positional since linear works independantly for each i in the sequence
         x = self.f1(x)
         x = torch.relu(x)
         x = self.f2(x)
