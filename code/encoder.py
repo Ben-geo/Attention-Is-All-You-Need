@@ -90,3 +90,23 @@ class PositionalEncoding(nn.Module):
         x = x+self.pos_encoder.requires_grad_(False)
         return x
     
+class EncoderLayer(nn.Module):
+    def __init__(self,d_model,num_heads,dff,dropout_rate):
+        super().__init__()
+
+        self.attn = MultiheadAttention(d_model,num_heads)
+        self.ffn = PositionalFeedForwardNetwork(d_model,dff)
+
+        self.ln1 = nn.LayerNorm(d_model) # layer norm not batch due to sequence
+        self.ln2 = nn.LayerNorm(d_model) 
+        self.dropout1 = nn.Dropout(dropout_rate)
+        self.dropout2 = nn.Dropout(dropout_rate)
+    def forward(self,x):
+        
+        attn_out = self.attn(x,x,x)
+        x = self.ln1(x+self.dropout1(attn_out))
+        fn_out = self.ffn(x)
+        x = self.ln2(x+self.dropout2(fn_out))
+
+        return x
+    
