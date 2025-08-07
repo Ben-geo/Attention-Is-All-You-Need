@@ -42,6 +42,11 @@ class MultiheadAttention(nn.Module):
 
         scores = torch.matmul(q,k.transpose(-2,-1))/math.sqrt(self.depth)
         attention_weights = torch.softmax(scores,-1)
+
+        if not mask:
+            mask = mask.unsqueeze(1)
+            scores = scores.masked_fill(mask,1e9)
+            
         output = torch.matmul(attention_weights,v)
         
         output = output.transpose(1,2).contiguous()
@@ -123,7 +128,7 @@ class Encoder(nn.Module):
 
         x = self.embedding(x)*math.sqrt(self.d_model)
         
-        enc = PositionalEncoding(d_model,x.size(1))
+        enc = PositionalEncoding(self.d_model,x.size(1))
         x = enc(x)
         x = self.dropout(x)
         
