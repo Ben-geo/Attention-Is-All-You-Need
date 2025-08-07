@@ -110,3 +110,23 @@ class EncoderLayer(nn.Module):
 
         return x
     
+class Encoder(nn.Module):
+    def __init__(self,inp_dim,num_layers,d_model,num_heads,dff,dropout_rate):
+        super().__init__()
+        self.d_model = d_model
+        self.num_layers = num_layers
+        self.embedding = nn.Embedding(inp_dim,d_model)
+        self.encoder_layers = nn.ModuleList(EncoderLayer(d_model,num_heads,dff,dropout_rate) for _ in range(num_layers))
+        self.dropout = nn.Dropout(dropout_rate)
+        
+    def forward(self,x):
+
+        x = self.embedding(x)*math.sqrt(self.d_model)
+        
+        enc = PositionalEncoding(d_model,x.size(1))
+        x = enc(x)
+        x = self.dropout(x)
+        
+        for layer in self.encoder_layers:
+            x = layer(x)
+        return x
