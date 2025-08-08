@@ -38,9 +38,6 @@ class DecoderLayer(nn.Module):
         return x
 
 class Decoder(nn.Module):
-    def __init__(self,):
-        super().__init__()
-
     def __init__(self,inp_dim,num_layers,d_model,num_heads,dff,dropout_rate):
         super().__init__()
         self.d_model = d_model
