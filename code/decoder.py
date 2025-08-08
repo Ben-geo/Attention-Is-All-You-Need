@@ -1,5 +1,12 @@
+import torch
+from torch import nn
+from .sublayers import MultiheadAttention,PositionalFeedForwardNetwork
+import math
+from .inp_encoding import PositionalEncoding
+
+
 class DecoderLayer(nn.Module):
-    def __init__(self,d_model,num_head):
+    def __init__(self,d_model,num_heads,dropout_rate,dff):
         super().__init__()
         self.self_attn = MultiheadAttention(d_model,num_heads)
         self.cross_attn = MultiheadAttention(d_model,num_heads)
@@ -16,12 +23,12 @@ class DecoderLayer(nn.Module):
 
     def forward(self,x,encoder_output,look_ahead_mask,padding_mask):
         #decoder self attention with look ahead mask
-        self_attn_out = self.self_attn(q=x,k=x,v=x,look_ahead_mask)
+        self_attn_out = self.self_attn(q=x,k=x,v=x,mask = look_ahead_mask)
         x = self.ln1(x+self.dropout1(self_attn_out))
         
 
         #cross attention each word pays attention to encoder output
-        cross_attn_out = self.cross_attn(q=x,k=encoder_output,v=encoder_output,padding_mask)
+        cross_attn_out = self.cross_attn(q=x,k=encoder_output,v=encoder_output,mask =padding_mask)
         x = self.ln2(x+self.dropout2(cross_attn_out))
 
 
@@ -46,7 +53,7 @@ class Decoder(nn.Module):
 
         x = self.embedding(x)*math.sqrt(self.d_model)
         
-        enc = PositionalEncoding(d_model,x.size(1))
+        enc = PositionalEncoding(self.d_model,x.size(1))
         x = enc(x)
         x = self.dropout(x)
         
