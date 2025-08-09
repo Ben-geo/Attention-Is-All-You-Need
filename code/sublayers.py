@@ -18,8 +18,8 @@ class MultiheadAttention(nn.Module):
     def split_heads(self,x):
         B = x.size(0)
         x = x.view(B,-1,self.num_heads,self.depth)
-        return x
-    def forward(self,q,k,v):
+        return x.transpose(1, 2)
+    def forward(self,q,k,v,mask=None):
         # consider the sentance the "cat sat on the mat"
         # q represents what "sat" wants to focus on
         # k is for all words — "The", "cat", "sat", "on", "the", "mat" — representing what each word offers
@@ -29,7 +29,7 @@ class MultiheadAttention(nn.Module):
         # attention_weights is softmax of scores — how much "sat" pays attention to each word (like "cat": 0.4)
         # output is the new vector for "sat", built from the weighted sum of values ("cat", "on", etc.)
         # bring all the attention heads back together
-
+        
         q = self.wq(q)
         k = self.wk(k)
         v = self.wv(v)
@@ -41,18 +41,15 @@ class MultiheadAttention(nn.Module):
 
 
         scores = torch.matmul(q,k.transpose(-2,-1))/math.sqrt(self.depth)
+        if mask is not None:
+            mask = mask.unsqueeze(1)
+            scores = scores.masked_fill(mask,-1e9)
+            
         attention_weights = torch.softmax(scores,-1)
 
-        if not mask:
-            mask = mask.unsqueeze(1)
-            scores = scores.masked_fill(mask,1e9)
-            
+        
         output = torch.matmul(attention_weights,v)
-        
         output = output.transpose(1,2).contiguous()
-
-        
-
         output = output.view(q.size(0),-1,self.d_model)
 
         return self.fc_out(output)

@@ -6,7 +6,7 @@ from .inp_encoding import PositionalEncoding
 
 
 class DecoderLayer(nn.Module):
-    def __init__(self,d_model,num_heads,dropout_rate,dff):
+    def __init__(self,d_model,num_heads,dff,dropout_rate):
         super().__init__()
         self.self_attn = MultiheadAttention(d_model,num_heads)
         self.cross_attn = MultiheadAttention(d_model,num_heads)
@@ -28,7 +28,7 @@ class DecoderLayer(nn.Module):
         
 
         #cross attention each word pays attention to encoder output
-        cross_attn_out = self.cross_attn(q=x,k=encoder_output,v=encoder_output,mask =padding_mask)
+        cross_attn_out = self.cross_attn(q=x,k=encoder_output,v=encoder_output,mask = padding_mask)
         x = self.ln2(x+self.dropout2(cross_attn_out))
 
 
@@ -38,11 +38,12 @@ class DecoderLayer(nn.Module):
         return x
 
 class Decoder(nn.Module):
-    def __init__(self,inp_dim,num_layers,d_model,num_heads,dff,dropout_rate):
+
+    def __init__(self,vocab_size,num_layers,d_model,num_heads,dff,dropout_rate):
         super().__init__()
         self.d_model = d_model
         self.num_layers = num_layers
-        self.embedding = nn.Embedding(inp_dim,d_model)
+        self.embedding = nn.Embedding(vocab_size,d_model)
         self.decoder_layers = nn.ModuleList(DecoderLayer(d_model,num_heads,dff,dropout_rate) for _ in range(num_layers))
         self.dropout = nn.Dropout(dropout_rate)
         

@@ -2,6 +2,7 @@ import torch
 from torch import nn
 import math
 
+device = "cuda "# define it as needed
 class PositionalEncoding(nn.Module):
     def __init__(self,d_model,S):
         super().__init__()
@@ -21,6 +22,6 @@ class PositionalEncoding(nn.Module):
         self.register_buffer("pos_encoder",pos_encoder) 
 
     def forward(self,x):
-        print(self.pos_encoder.shape)
-        x = x+self.pos_encoder.requires_grad_(False)
+        
+        x = x+self.pos_encoder.requires_grad_(False).to(device)
         return x
