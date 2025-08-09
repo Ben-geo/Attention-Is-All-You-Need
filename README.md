@@ -96,6 +96,7 @@ This lets the decoder attend to the entire encoded source sequence.
 Same as in the encoder, applied independently at each position.
 
 ---
+
 ## Multi-Head Attention
 
 The core operation of the Transformer is **scaled dot-product attention**:
