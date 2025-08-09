@@ -64,9 +64,7 @@ Every token attends to all other tokens in the source, allowing direct modeling 
 ### 2. Position-Wise Feed-Forward Network
 
 - Two fully connected layers applied independently to each position:
-  \[
-  \text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2
-  \]
+![alt text](image-1.png)
 - Same parameters are shared across all positions.
 
 ---
@@ -102,9 +100,7 @@ Same as in the encoder, applied independently at each position.
 
 The core operation of the Transformer is **scaled dot-product attention**:
 
-\[
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
-\]
+![alt text](image.png)
 
 - **Q (Queries)**, **K (Keys)**, **V (Values)** are all vectors derived from the input sequences via learned projection matrices.
 - The scaling factor \( \sqrt{d_k} \) prevents large dot products from pushing the softmax into regions with very small gradients.
@@ -127,12 +123,7 @@ To inject sequence order information, **positional encodings** are added to the 
 
 For a position \( pos \) and dimension \( i \):
 
-\[
-PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i / d_\text{model}}}\right)
-\]
-\[
-PE_{(pos, 2i+1)} = \cos\left(\frac{pos}{10000^{2i / d_\text{model}}}\right)
-\]
+![alt text](image-2.png)
 
 - Even dimensions use sine, odd dimensions use cosine.
 - This allows the model to easily learn relative positions, since \(\sin\) and \(\cos\) are periodic functions.
