@@ -96,3 +96,45 @@ This lets the decoder attend to the entire encoded source sequence.
 Same as in the encoder, applied independently at each position.
 
 ---
+## Multi-Head Attention
+
+The core operation of the Transformer is **scaled dot-product attention**:
+
+\[
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
+\]
+
+- **Q (Queries)**, **K (Keys)**, **V (Values)** are all vectors derived from the input sequences via learned projection matrices.
+- The scaling factor \( \sqrt{d_k} \) prevents large dot products from pushing the softmax into regions with very small gradients.
+- **Q (Query):** What the current position is *asking for*.  
+- **K (Key):** What each position *offers* as information.  
+- **V (Value):** The actual information content to be retrieved.  
+
+**Why multi-head?**  
+
+- Each head can focus on different types of relationships (short-term, long-term, syntactic, semantic). works similar to having multiple attentions
+
+---
+
+## Positional Encoding
+
+Since the Transformer does not use recurrence or convolution, it has no inherent notion of token order.  
+To inject sequence order information, **positional encodings** are added to the input embeddings at the bottom of the encoder and decoder stacks.
+
+### Sinusoidal Form
+
+For a position \( pos \) and dimension \( i \):
+
+\[
+PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i / d_\text{model}}}\right)
+\]
+\[
+PE_{(pos, 2i+1)} = \cos\left(\frac{pos}{10000^{2i / d_\text{model}}}\right)
+\]
+
+- Even dimensions use sine, odd dimensions use cosine.
+- This allows the model to easily learn relative positions, since \(\sin\) and \(\cos\) are periodic functions.
+
+The positional encoding matrix is **added** to the token embeddings before feeding into the first encoder/decoder layer.
+
+---
