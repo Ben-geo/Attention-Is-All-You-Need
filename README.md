@@ -1,30 +1,98 @@
-# Attention-Is-All-You-Need
+# Attention Is All You Need
 
-This is a reproduction of 2017 paper attention is all you need
+This is a summary and partial reproduction of the 2017 paper *Attention Is All You Need*,  
+which introduced the Transformer — a model that relies solely on attention mechanisms, removing the need for recurrence or convolutions in sequence modeling.
 
-Let's start with the need for Transformer; a model that only used the attention and removed the need for Recurrence or convultions for sequential data
+---
 
-## Limitations of Recurrence and Convolutions
+## Motivation: Why Transformers?
 
-### Recurrence
+Traditional sequence models relied on **Recurrence** (RNNs, LSTMs, GRUs) or **Convolutions** (CNNs), but both have limitations.
 
-- **Lack of Parallelization :** RNN passes sequences back into the model. so for each hidden state you need to have already computed the hidden state in the the previous step. So inherently we can not parallelize them, This slows down training by a lot.
-- **Vanishing/Exploding Gradients :** Information is lost as more and more information is passed through the RNN. ( LSTM solves this to some extent but not entirely)
+### Limitations of Recurrence
 
-### Convolutions
+- **Lack of Parallelization:**  
+  RNNs process tokens sequentially — each hidden state depends on the previous one.  
+  This prevents full parallelization during training and slows it down significantly.
 
-- **Small Receptive Field :** Local blocks get access to data within that block alone (example top left and bottom right corner of an image) so to get information from both these points a lot of layers have to be stacked.
-- **Positional Invariance :** They are not good at capturing where the pattern is (a cats nose is a cats nose no matter where it is in the image). in sequences the position matters a lot, to solve this positional encoding can be done but Convolutions itself doesn't prioritize position
+- **Vanishing/Exploding Gradients:**  
+  Information must propagate through many time steps, which can cause gradients to vanish or explode.  
+  LSTMs and GRUs mitigate this but do not fully solve it.
 
-## Model Architecture
+---
+
+### Limitations of Convolutions
+
+- **Small Receptive Field:**  
+  A convolutional layer only captures local context.  
+  To model long-range dependencies, multiple layers must be stacked, increasing computation.
+
+- **Positional Invariance:**  
+  CNNs are designed to detect *what* patterns exist, not *where* they occur.  
+  In sequences, position matters, so explicit **positional encoding** is needed.
+
+---
+
+## Transformer Architecture Overview
 
 ![Directly taken from the paper](model_architecture.png)
+*Figure from Vaswani et al., 2017 — "Attention Is All You Need"*
 
+> "The encoder maps an input sequence of symbol representations $(x_1, ..., x_n)$  
+> to a sequence of continuous representations $z = (z_1, ..., z_n)$.  
+> Given $z$, the decoder generates an output sequence $(y_1, ..., y_m)$ one element at a time."
 
-"the encoder maps an input sequence of symbol representations (x1, ..., xn) to a sequence
-of continuous representations z = (z1, ..., zn). Given z, the decoder then generates an output
-sequence (y1, ..., ym) of symbols one element at a time."
+The model consists of **stacked encoders** and **stacked decoders**, each made up of sublayers with residual connections and layer normalization.
 
-#### Encoder
+---
 
-#### Decoder
+## Encoder
+
+The **encoder** processes the **source sequence** into contextual representations.
+
+Each encoder block has **two sublayers**:
+
+### 1. Multi-Head Self-Attention
+
+- **Q**: queries from the same source sequence  
+- **K**: keys from the same source sequence  
+- **V**: values from the same source sequence  
+
+Every token attends to all other tokens in the source, allowing direct modeling of dependencies regardless of distance.
+
+### 2. Position-Wise Feed-Forward Network
+
+- Two fully connected layers applied independently to each position:
+  \[
+  \text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2
+  \]
+- Same parameters are shared across all positions.
+
+---
+
+## Decoder
+
+The **decoder** generates the **target sequence** step-by-step, attending to both previous outputs and the encoder’s representations.
+
+Each decoder block has **three sublayers**:
+
+### 1. Masked Multi-Head Self-Attention
+
+- **Q**: queries from the target sequence so far  
+- **K**: keys from the target sequence so far  
+- **V**: values from the target sequence so far  
+- A mask prevents each position from attending to future tokens.
+
+### 2. Multi-Head Cross-Attention
+
+- **Q**: queries from the decoder’s previous sublayer  
+- **K**: keys from the encoder output  
+- **V**: values from the encoder output  
+
+This lets the decoder attend to the entire encoded source sequence.
+
+### 3. Position-Wise Feed-Forward Network
+
+Same as in the encoder — applied independently at each position.
+
+---
