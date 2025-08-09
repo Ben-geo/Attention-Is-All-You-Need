@@ -36,6 +36,7 @@ Traditional sequence models relied on **Recurrence** (RNNs, LSTMs, GRUs) or **Co
 ## Transformer Architecture Overview
 
 ![Directly taken from the paper](model_architecture.png)
+
 *Figure from Vaswani et al., 2017 , "Attention Is All You Need"*
 
 > "The encoder maps an input sequence of symbol representations $(x_1, ..., x_n)$  
