@@ -1,7 +1,7 @@
 # Attention Is All You Need
 
 This is a summary and partial reproduction of the 2017 paper *Attention Is All You Need*,  
-which introduced the Transformer — a model that relies solely on attention mechanisms, removing the need for recurrence or convolutions in sequence modeling.
+which introduced the Transformer , a model that relies solely on attention mechanisms, removing the need for recurrence or convolutions in sequence modeling.
 
 ---
 
@@ -12,7 +12,7 @@ Traditional sequence models relied on **Recurrence** (RNNs, LSTMs, GRUs) or **Co
 ### Limitations of Recurrence
 
 - **Lack of Parallelization:**  
-  RNNs process tokens sequentially — each hidden state depends on the previous one.  
+  RNNs process tokens sequentially, each hidden state depends on the previous one.  
   This prevents full parallelization during training and slows it down significantly.
 
 - **Vanishing/Exploding Gradients:**  
@@ -36,7 +36,7 @@ Traditional sequence models relied on **Recurrence** (RNNs, LSTMs, GRUs) or **Co
 ## Transformer Architecture Overview
 
 ![Directly taken from the paper](model_architecture.png)
-*Figure from Vaswani et al., 2017 — "Attention Is All You Need"*
+*Figure from Vaswani et al., 2017 , "Attention Is All You Need"*
 
 > "The encoder maps an input sequence of symbol representations $(x_1, ..., x_n)$  
 > to a sequence of continuous representations $z = (z_1, ..., z_n)$.  
@@ -93,6 +93,6 @@ This lets the decoder attend to the entire encoded source sequence.
 
 ### 3. Position-Wise Feed-Forward Network
 
-Same as in the encoder — applied independently at each position.
+Same as in the encoder, applied independently at each position.
 
 ---
