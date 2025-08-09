@@ -16,7 +16,7 @@ Let's start with the need for Transformer; a model that only used the attention 
 - **Small Receptive Field :** Local blocks get access to data within that block alone (example top left and bottom right corner of an image) so to get information from both these points a lot of layers have to be stacked.
 - **Positional Invariance :** They are not good at capturing where the pattern is (a cats nose is a cats nose no matter where it is in the image). in sequences the position matters a lot, to solve this positional encoding can be done but Convolutions itself doesn't prioritize position
 
-### Model Architecture
+## Model Architecture
 
 ![Directly taken from the paper](model_architecture.png)
 
